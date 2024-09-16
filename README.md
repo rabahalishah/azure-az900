@@ -43,3 +43,19 @@ Disaster recovery options:
 - Pilot Light (Data is replicated to another regions, faster but expensive)
 - Warm Standby (Scaled down copy of your infrastructure running ready to scale up)
 - Multi-site Active: Scaled up copy of your infrastrtucture. (Real time but very expensive almost double the amount of your current infrastructure)
+
+Types of Cloud Computing:
+Dedicated servers
+VMs
+Containers
+Functions
+
+
+Domains in Cloud:
+Availability zones (Data centers) are the combination of fault domain (they make sure that system do not have a single point of failure) and update domain (this make sure that your server/machine do not have a down time while updating it.)
+You select the value of Fault Domain and Update Domain.
+Imagine Fault domain as the number of columns of racks. 
+Imagine Update domain as the number of servers in on column of racks.
+
+Regions are the set of availability zones (data centers)
+
