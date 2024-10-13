@@ -310,3 +310,26 @@ When someone sets a rule with **priority 400**, here’s what it signifies:
  **Determine Importance:**
    - **High Importance:** Rules that need to be evaluated first (e.g., allowing access from trusted sources) should have **lower priority numbers**.
    - **Low Importance:** General deny rules or less critical allow rules can have **higher priority numbers**.
+
+# Understanding Azure Virtual Network (VNET):
+Before getting jump into Azure Vnet lets first understand what is the need of vnet and what happen when we do not have vnet.
+For example: There devops engineers from NIKE and PUMA both request for VM in US-East region and availability zone 1.
+Since, both companies are requesting the VM in the same Data center. So now if hacker get access to NIKE's data then it would be easier to access the PUMA data as well. Cause both application are residing in same Data center and have same network. Just to solve this problem and to manage the network traffic coming inside and going outside from applications and VMs. Azure introduced the concept of VNET.
+
+### How we will define the size of our VNET?
+The size of a network is defined by its number of ip-addresses.
+**You can define the size of your VNET using CIDR (Class inter-domain routing). For example for CIDR /16 standard you will have 65536 IP addresses**
+
+Using VNET you can define your n-number of Vnets in your VM. So, In short **VNET is basically a logical isolation of network inside a physical network in a physical server**
+
+In Vnet you can also create your subnets and what is the benefit of dividing the VNET into subnet is that you can separate your application, databases and websites from each other and manage their network traffic separately.
+
+In azure we have NSG (Network security group) and ASG (Application Security group). We manage the traffic using these two features. NSG allows you to define the rules of flowing traffic from one subnet to other and where as ASG allows you to defines the network traffic flow rules from one particular application in a particular subnet to the other applications of the other subnets.
+
+**Using the NSG and ASG you can define the rules that who can access which application from outside (AKA source) and what can go out from VNET. And Even it allows you to define network traffic rules from one subnet to the other subnets.**
+
+**For example:** You have a VNET which is divided into two subnets. One subnet contains website and business logic application and the other contains Databases. So using NSG we can define the rule that no body from the internet can access the business login application and databases. Only request from the website to the business logic application or databases is allowed. And using ASG we can even define the rule the any particular application among several applications inside the same subnet can only send request to the other network particular application. Means ASG provide us define rules at application level. 
+
+**NOTE:** In industry we use both, NSG + ASG
+
+**For example in above section where we deployed jenkins on our VM. We set the network rule for Jenkins only.**
