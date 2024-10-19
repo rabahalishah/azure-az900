@@ -381,7 +381,40 @@ ASGs group Azure virtual machines based on application requirements, simplifying
 
 - **Simplification**: ASGs allow defining rules based on application roles instead of individual IP addresses.
 
-- **Dynamic Membership**: ASGs support dynamic membership based on tags or other attributes.
+# Azure Advance Networking concepts:
+Following are the concepts that we are gonna cover in this section:
+- Azure App Gate way & WAF (Web Application Firewall)
+- Azure Load Balancer
+- Azure DNS
+- Azure Firewall
+- Virtual Network Peering and VNET Gateway
+- VPN Gateway
 
-- **Rule Association**: Security rules can be associated with ASGs for intuitive and scalable network security management.
 
+Ok, so I am gonna compare the terminologies of azure VNET with a Housing Scheme.
+Assume VNET as a Housing Scheme. And Blocks inside it as subnets. Since the housing scheme is secure. So, the walls will acts as a firewall. And the gate of the scheme will be act as Gateway. Assume there is a security Guard at the gate that will make sure that the person/guest that is coming inside the premisses of the housing scheme must reach to the right destination. That will be done by routing system. And assume each block of scheme that are subnets in Azure VNET have a security guard that will make sure that the person reaches to the right home. And in VNET that will be called as NSG (Network Security Group) that will make sure that the traffic reaches the right resource.
+
+Okay so now you have a basic understanding of Azure VNET architecture. Lets get deeper inside it.
+Assume you have a 3 tier application that contains front-end, backend and database. You deployed all this in an Azure VNET with three respective subnets and each subnet contains the copy of the project/instance that will be in different availability zone. so to manage traffic. Like how much traffic should be go to this instance and how much to that, this will be done by load balancer. 
+
+### Load balancers in Azure
+In azure we have two types of load balancer:
+- App gateway (L-7):This deals with the external HTTP traffic coming from outside the VNET such as your URL and so on.
+- Load balancer/ Azure Load balancer (L-4): This applies at the application level inside the VNET. Request coming from front-end to the backend will be deal by App gateway as it will decide to which instance of backend this request should send.
+
+Below is the picture of the whole flow:
+![Uploading image.png…]()
+
+
+### Summary of the above figure:
+Now let say, a user wants to access your application let say the domain of your application is abc.com. Now you will map your IP of your load balancer and website domain. So that whenever a user try to access your web app by its domain then the traffic should go to load balancer first that will decide, and then forward the request to the respective application.
+
+When a user makes a request, it does by the name of the domain. That requests goes to your IPS (Internet service provider) that sends to the DNS and then request get forwarded to the Azure's DNS and then it get redirected to app-gateway and so on.
+
+**Virtual Network Peering**:
+In virtual network peering concept, we conncet two virtual networks. Let say in NIKE they have two projects, NIKE billing and NIKE Store. And they have their separate VNETs then using the using this Virtual network peering we can conncet them. **For this we must have admin permissions in both VNETs** So that we are gonna change the route tables so the traffic can flow form one VNET to the other.
+
+This can also be done using VNET Gateway.
+
+### VPN Gateway:
+Here let say your industry have a hybrid cloud model. Like they have their own datacenter in their office and they also use Azure VMs. So in this case if  they want to connect their on premisses Data center with Azure VM then they can do it using VPN Gateway.
