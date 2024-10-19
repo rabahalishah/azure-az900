@@ -403,7 +403,8 @@ In azure we have two types of load balancer:
 - Load balancer/ Azure Load balancer (L-4): This applies at the application level inside the VNET. Request coming from front-end to the backend will be deal by App gateway as it will decide to which instance of backend this request should send.
 
 Below is the picture of the whole flow:
-![Uploading image.png…]()
+![image](https://github.com/user-attachments/assets/83dfbbf2-ddf8-4b10-b439-e3fa5720f0fb)
+
 
 
 ### Summary of the above figure:
