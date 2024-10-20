@@ -419,3 +419,73 @@ This can also be done using VNET Gateway.
 
 ### VPN Gateway:
 Here let say your industry have a hybrid cloud model. Like they have their own datacenter in their office and they also use Azure VMs. So in this case if  they want to connect their on premisses Data center with Azure VM then they can do it using VPN Gateway.
+
+#  Azure VNet, Firewall, NSG and Bastion Practical Implementation and Step by Step Guide:
+Okay so first we are gonna do is that, we are gonna create a VNET and in that VNET are gonna create 4 subnets.
+- Firewall subnet
+- Firewall manager
+- Bastion Subnet
+- Nginx subnet (any project)
+
+And then our goal is to flow the traffic from the external user to the application via firewall not directly. Here Bastion is a new thing that is explained below:
+## When Should You Use Bastion?
+When you don’t want to expose public IPs: Bastion allows you to keep your VM private without exposing it to the internet.
+When you need secure access to VMs in private networks: Bastion is perfect for accessing VMs that reside in private subnets or VNETs.
+When you need browser-based access: For quick, web-based access to VMs without needing SSH/RDP clients installed locally.
+When security is a top priority: With Bastion, you minimize security risks by not exposing SSH ports to the public internet.
+
+**NOTE: IF VM is created using Bastion enabled then it will not have any Public IP. But only private IP. So we are gonna access our VM then?**
+ANSWER: 
+How it works:
+**No Public IP:**The VM operates without a public IP address, meaning it is not directly exposed to the public internet. This significantly enhances security because there’s no direct path for external access.
+
+**Private IP Address:** The VM will have a private IP address within the virtual network (VNET) that it is deployed in. This private IP is only accessible within the Azure infrastructure (and other connected networks like VPNs or ExpressRoute).
+
+**Access via Azure Bastion:** Instead of connecting to the VM using its public IP (like in a traditional SSH or RDP setup), you use Azure Bastion to connect. Bastion provides a secure, browser-based connection directly from the Azure portal without the need for a public IP. Bastion handles the communication internally within Azure.
+
+**Bastion is the Gateway:** Bastion acts as a gateway or intermediary between your local machine and the VM. You connect through Bastion (via the Azure portal), and it routes your connection securely to the VM's private IP using Azure's internal network.
+
+![image](https://github.com/user-attachments/assets/57db8dfc-754d-4e65-a213-c20bd27c65ee)
+
+Here round circle is the VNET and blocks are subnets. You might be wondering that where is the subnet of firewall manager. So dont worry we do not create it manually. But Azure create it automatically when we create a firewall. 
+
+## STEP BY STEP PROCEDURE to install nginx in a VM created using bastion and firewall implementation:
+- First create a resource group if you haven't already. Go to resource group, set name, and select region and click on create.
+- Now create a VNET. Search VNET. Select resource group that you just have created. Set the name, **In the security tab don't forget to enable Bastion and Azure Firewall. Cause we want Firewall**.
+- For firewall policy click on create a new policy.
+- Now in your IP address tab. Select the size of your VNET (size means number of IP addresses you want)
+- Now click on create VNET and wait unitl it the VNET is not created.
+- Now create a VM that is very simple, but in the networking tab you have to select your VNET which you just have created above. For subnet select default. Cuz we want to put our application in the default subnet. (you can also change the name from default to anything you want)
+- Select Public IP to none (cuz we want this VM to be deployed behind the firewall and in the private subnet that is nginx-subnet in our case)
+- now click on create VM and download the pem file.
+- Now its time to get access to this VM. But do not have Public IP but private IP so we have to access it using Bastion. So go to your VM and look for connect option, go to Bastion. Select authentication-type as select SSH file from local machine and give username. and click on connect.
+- Now a new tab in your browser will be open that will contain a terminal. Here you have access to your VM and you can install what you want. So here we are gonna install nginx and gonna set a static HTML page.
+- Following are that you have to follow once you have get access to your VM using bastion:
+   ```bash
+   sudo su -
+   apt-update
+   apt-get install nginx -y
+   cd /var/www/html
+   nano index.html
+   <h1>I have learnt Azure Networking.</h1>
+   systemctl restart nginx
+   curl localhost:80 //this will return you your HTML. Actually here you are verifying your Deployement.
+   ```
+**NOTE**: Uptil now, we have created our VNET, subnets and successfully connected to our VM using Bastion. But how users are gonna interact with our HTML page that we just have deployed in our VM? So for that we have to configure our Firewall.
+
+## Configuring Firewall to get access to the app:
+- Go to firewall manager > in security tab, go to Azure Firewalls > and look for firewall policy and click on it.
+- After that go to DNAT (Network access translation) rules. Click on add rules collection. Give it a name. and set priority to 100. Keep rest as it is and click on add.
+- Now click on add rule and follow the steps carefully:
+  - Select the collection of the rules that you just have created.
+  - Give this rule a name
+  - In Source IP address put your laptops IPv4 only (source IP is what, who wants to access this application. In this case only I want to bypass firewall so I'll use only my IP)
+  - In destination IP address you have to put the Public IP address of your Firewall not private IP. Cause we are flowing our traffic from user to firewall and firewall will forward that request to the subnet and application.
+  - Select protocol to TCP
+  - Destination Port to any number. I am using 4000. (since we have only one application right now in our VNET so we can use any port for this. But there will be different ports for other applications.)
+  - In Translated IP address is the Private IP address of your VM in which nginx application is deployed. You can get that by going into your VM and network settings.
+  - and in translated port select the port as the port on which your nginx/or your application is running. in my case its 80.
+  - Now save it. And your are done.
+- Here we have give the source as our laptop (means only our laptop is allow to bypass firewall) and set the destination as our firewall and translated IP as our VM private IP. So now when the user from my laptop is gonna hit request on the browser on Public IP address of the firewall and the port 4000 or whatever I should be able to see. My HTML page.
+
+**Congrates you are done. You have successfully created a VNET that have firewall and only your laptop is allowed to bypass firewall.**
