@@ -489,3 +489,173 @@ Here round circle is the VNET and blocks are subnets. You might be wondering tha
 - Here we have give the source as our laptop (means only our laptop is allow to bypass firewall) and set the destination as our firewall and translated IP as our VM private IP. So now when the user from my laptop is gonna hit request on the browser on Public IP address of the firewall and the port 4000 or whatever I should be able to see. My HTML page.
 
 **Congrates you are done. You have successfully created a VNET that have firewall and only your laptop is allowed to bypass firewall.**
+
+# Azure Networking Interview Q&A
+
+### What is the difference between NSG and ASG ?
+ASGs are applied to VMs and are used in conjunction with NSGs. By associating an ASG tag with a network security rule, you can define rules that apply to a group of VMs sharing the same tag.
+ASGs simplify the management of security rules in a multi-tier application by grouping VMs that belong to the same application tier. This makes it easier to apply and manage security policies for a specific application.
+
+### How can you block the access to a your vm from a subnet ?
+By default traffic is allowed between subnets with in the VNet in Azure. This is because of a default NSG rule “AllowVnetInBound”. 
+
+The priority of this rule is 65000, so we need to create a Deny rule with less than 65000 priority number.
+
+### Are Azure NSGs stateful or stateless ?
+They are stateful in nature. That means if you allow a port for inbound traffic traffic to receive the request. You don’t have to open the port in outbound rules to send response back.
+
+Example: If you host a host an application on port 80 in azure vm and allow inbound traffic for customers to access it. You don’t need to open port 80 in outbound traffic to send response back to the customer.
+
+### What is the difference between Azure Firewall and NSG ?
+Firewall:
+Designed for controlling both outbound and inbound traffic to and from resources within a Virtual Network (VNet).
+
+NSG:
+Typically associated with subnets or individual network interfaces to control traffic within a VNet and between VNets.
+
+### What are the advantages of resource groups in azure ?
+- Logical Organization
+- Lifecycle Management
+- Resource Group Tagging
+- Role-Based Access Control (RBAC)
+- Cost Management
+- Resource Group Templates (Azure Resource Manager Templates)
+- Resource Locks
+
+### What is the difference between Azure User Data and Custom Data ?
+User data is a new version of custom data and it offers added benefits. User data persists and lives in the cloud, accessible and updatable anytime. Custom data vanishes after first boot, accessible only during VM creation.
+
+### What is the difference between Azure App Gateway and Azure LB ?
+
+#### Azure Application Gateway:
+Operates at Layer 7 (Application layer) of the OSI model.
+Provides advanced application-level routing, SSL termination, and web application firewall (WAF) capabilities.
+Suited for distributing traffic based on application awareness.
+
+#### Azure Load Balancer:
+Operates at Layer 4 (Transport layer) of the OSI model.
+Distributes network traffic based on IP address and port.
+Suitable for generic TCP/UDP load balancing without application-specific features.
+
+### Assume your company is using all the ideal Azure Networking setup and your application is deployed in the web subnet , Explain the traffic flow to your app ?
+
+#### User Access:
+- External users access the application over the internet.
+- DNS resolves the application's domain name to the associated public IP address.
+
+#### Internet Traffic to Azure:
+-Incoming internet traffic reaches Azure through Azure Front Door, Azure Application Gateway, or Azure Load Balancer, depending on the specific requirements of the application.
+- These services provide load balancing, SSL termination, and other application-level features.
+
+#### Traffic Routing Within Azure:
+- Traffic is directed to the public IP address associated with the Azure Application Gateway or Load Balancer.
+- The gateway or load balancer routes traffic to the backend pool of the web servers in the web subnet.
+
+#### Network Security Group (NSG) Enforcement:
+- Network Security Groups associated with the web subnet control inbound and outbound traffic.
+- NSG rules ensure that only required traffic is allowed, providing security at the network layer.
+- Azure Virtual Network (VNet) Components:
+- The web subnet is part of an Azure Virtual Network, which acts as an isolated network environment.
+- Subnets within the VNet communicate with each other through the VNet's internal routing.
+
+#### Application Servers:
+- Web servers within the web subnet process incoming requests
+
+#### Describe the purpose of Azure Bastion and when it is used for secure remote access to virtual machines.
+- Secure Remote Access:
+- Elimination of Public Internet Exposure:
+- Reduced Attack Surface:
+- Azure Bastion Integration:
+- Simplified Connectivity:
+- Azure Portal-Based Access:
+- Role-Based Access Control (RBAC):
+- Multi-Factor Authentication (MFA):
+- Audit and Monitoring:
+
+# Azure Storage Servuces:
+# Azure Blob Storage
+
+1. What is it?
+
+    Azure Blob Storage is a cloud-based object storage solution provided by Microsoft Azure.
+    It is designed to store and manage large amounts of unstructured data, such as documents, images, videos, and other types of binary and text data.
+    Blobs are organized into containers, and each blob is assigned a unique URL for access.
+
+2. When to use it?
+
+    Use Azure Blob Storage when you need to store and retrieve large amounts of unstructured data.
+    It is suitable for scenarios like serving images or videos to a website, storing backups, and handling data for analytics and big data processing.
+
+3. Example from DevOps Engineer point of view?
+
+    A DevOps engineer may use Azure Blob Storage to store artifacts and binaries produced during the build process, ensuring a centralized and scalable storage solution.
+    Azure Storage Explorer or Azure CLI can be used to automate the uploading and retrieval of artifacts during deployment pipelines.
+
+4. Equivalent service in AWS:
+
+    The equivalent service in AWS is Amazon Simple Storage Service (S3). S3 is also an object storage service designed for scalable and secure storage of objects, such as files and data.
+
+# Azure File Storage
+
+1. What is it?
+
+    Azure File Storage is a fully managed file share service in the cloud.
+    It provides the Server Message Block (SMB) protocol for sharing files across applications and VMs in the Azure cloud.
+    Azure File Storage is useful for applications that require shared file access, such as configuration files or data files.
+
+2. When to use it?
+
+    Use Azure File Storage when you need a shared file system that can be accessed from multiple VMs or applications.
+    It is suitable for scenarios like storing configuration files, sharing data between applications, and serving as a common storage location for applications in a cloud environment.
+
+3. Example from DevOps Engineer point of view?
+
+    A DevOps engineer may leverage Azure File Storage to store configuration files that are shared among multiple application instances.
+    In a deployment pipeline, scripts or configuration files stored in Azure File Storage can be mounted to VMs or containers during the deployment process.
+
+4. Equivalent service in AWS:
+
+    The equivalent service in AWS is Amazon Elastic File System (EFS). EFS provides scalable file storage for use with Amazon EC2 instances, supporting the Network File System (NFS) protocol.
+
+# Azure Tables
+
+1. What is it?
+
+    Azure Tables is a NoSQL data store service provided by Azure.
+    It stores large amounts of semi-structured data and allows for fast and efficient querying using a key-based access model.
+    Data is organized into tables, and each table can store billions of entities.
+
+2. When to use it?
+
+    Use Azure Tables when you need a highly scalable NoSQL data store for semi-structured data with simple key-based access.
+    It is suitable for scenarios like storing configuration data, user profiles, and other data where a key-value or key-attribute data model is appropriate.
+
+3. Example from DevOps Engineer point of view?
+
+    A DevOps engineer may use Azure Tables to store configuration settings for applications or services.
+    During the deployment process, scripts can retrieve configuration data from Azure Tables to customize the behavior of deployed applications.
+
+4. Equivalent service in AWS:
+
+    While AWS does not have a direct equivalent service for Azure Tables, Amazon DynamoDB is a similar NoSQL database service that provides key-value and document storage. DynamoDB can be used for similar use cases.
+
+   # Azure Queue Storage
+
+1. What is it?
+
+    Azure Queue Storage is a message queue service that allows decoupling of components in a distributed application.
+    It provides a reliable way to store and retrieve messages between application components, ensuring asynchronous communication.
+
+2. When to use it?
+
+    Use Azure Queue Storage when you need to enable communication and coordination between different parts of a distributed application.
+    It is suitable for scenarios like handling background jobs, managing tasks asynchronously, and facilitating communication between loosely coupled components.
+
+3. Example from DevOps Engineer point of view?
+
+    A DevOps engineer may use Azure Queue Storage to implement a message queue for processing background tasks or managing communication between microservices.
+    During deployment, scripts can enqueue messages to trigger specific actions or coordinate tasks between different components.
+
+4. Equivalent service in AWS:
+
+    The equivalent service in AWS is Amazon Simple Queue Service (SQS). SQS provides a fully managed message queue service for decoupling components in a distributed system.
