@@ -659,3 +659,29 @@ Suitable for generic TCP/UDP load balancing without application-specific feature
 4. Equivalent service in AWS:
 
     The equivalent service in AWS is Amazon Simple Queue Service (SQS). SQS provides a fully managed message queue service for decoupling components in a distributed system.
+
+
+# Network Security Group (NSG)
+Purpose: An NSG is a set of security rules that control inbound and outbound traffic to and from Azure resources at the network level.
+Scope: It operates at OSI Layers 3 and 4 (Network and Transport), so it can filter traffic based on IP addresses, protocols, and ports.
+Application Level: You can apply an NSG to subnets or individual network interfaces (NICs) on virtual machines within a virtual network (VNet). So, NSGs aren't limited to just the subnet or VNet level — they can also be applied to individual VMs via their NICs.
+Usage: NSGs provide fine-grained control over traffic flow for both the VM and the VNet level, allowing or denying specific IPs, ports, and protocols. They essentially act as firewalls for your Azure resources.
+# Application Security Group (ASG)
+Purpose: ASGs simplify the management of network security rules for applications by allowing you to group VMs logically. ASGs act as "labels" or "tags" for resources (typically VMs) that belong to the same application or tier, regardless of their actual IP addresses.
+Scope: ASGs work with NSGs and are used to define NSG rules based on application-level groupings rather than specific IP addresses.
+Application Level: ASGs are applied only at the VM's NIC level and not at the subnet level.
+Usage: Instead of specifying individual IPs or VM NICs in NSG rules, you can use ASGs to group VMs together. For instance, if you have VMs that belong to the "web-tier" and "database-tier," you can create ASGs for each tier and reference them in NSG rules (e.g., allow traffic from "web-tier" ASG to "database-tier" ASG on port 1433).
+## Key Differences and Relationship
+NSG is the actual security rule set that controls traffic, applied at the NIC or subnet level.
+ASG is a logical grouping that can be used within NSG rules to simplify the management of those rules.
+Combination: You use ASGs within NSG rules to make rules more manageable and easier to understand. For example, instead of creating individual rules for each VM IP, you create ASGs (like "web-tier" and "db-tier") and use them in NSG rules.
+## Example Use Case
+Imagine a scenario where you have:
+
+A web application tier with multiple VMs handling HTTP requests.
+A database tier with multiple VMs running a database.
+
+**You could:**
+Create an ASG called "web-tier" for all VMs serving the web app.
+Create another ASG called "db-tier" for the database VMs.
+Use these ASGs in an NSG rule that allows traffic from "web-tier" to "db-tier" on port 1433 (the SQL database port), without manually configuring each IP address.
