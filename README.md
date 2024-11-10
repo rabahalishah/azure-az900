@@ -681,7 +681,47 @@ Imagine a scenario where you have:
 A web application tier with multiple VMs handling HTTP requests.
 A database tier with multiple VMs running a database.
 
+
+
 **You could:**
 Create an ASG called "web-tier" for all VMs serving the web app.
 Create another ASG called "db-tier" for the database VMs.
 Use these ASGs in an NSG rule that allows traffic from "web-tier" to "db-tier" on port 1433 (the SQL database port), without manually configuring each IP address.
+
+# Azure CLI
+Install the azure CLI in your respective OS from Azure CLI documentation.
+
+# Create VM using Azure CLI
+
+### Start with creating a Resource Group
+
+```
+az group create --name learn-azure-cli --location eastus
+```
+
+### Set the Resource Group as default (Optional)
+
+```
+az config set defaults.group=learn-azure-cli
+```
+
+### Create VM with Vnet
+
+```
+az vm create \
+  --resource-group learn-azure-cli \
+  --name vmName \ 
+  --image Ubuntu2204 \
+  --vnet-name default \  
+  --subnet default \    
+  --generate-ssh-keys \
+  --output json \
+  --verbose
+```
+
+### Delete the Resource Group to delete all the resources
+
+```
+az group delete --name learn-azure-cli
+```
+
